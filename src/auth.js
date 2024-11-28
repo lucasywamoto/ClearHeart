@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-import credencialProvider from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 
@@ -12,10 +12,10 @@ export const {
   signOut,
 } = NextAuth({
   session: {
-    strategy: "jwt",
+    strategy: "jwt", // Using JWT for session strategy
   },
   providers: [
-    credencialProvider({
+    CredentialsProvider({
       credentials: {
         email: {},
         password: {},
@@ -32,9 +32,9 @@ export const {
             );
 
             if (isMatch) {
-              return user;
+              return user; // Returning user object if authentication is successful
             } else {
-              throw new Error("Credencials does not match");
+              throw new Error("Credentials do not match");
             }
           } else {
             throw new Error("User not found");
@@ -67,4 +67,18 @@ export const {
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user._id;
+        token.email = user.email;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user.id = token.id;
+      session.user.email = token.email;
+      return session;
+    },
+  },
 });
