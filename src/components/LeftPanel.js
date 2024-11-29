@@ -6,39 +6,15 @@ import Spinner from "./Spinner";
 import SpectrumLabel from "./SpectrumLabel";
 import Profile from "./Profile";
 
-export default function LeftPanel({ session }) {
+export default function LeftPanel({
+  session,
+  hasSubmittedToday,
+  setHasSubmittedToday,
+  isLoading,
+  selectedMood,
+  setSelectedMood,
+}) {
   const [moods, setMoods] = useState([]);
-  const [selectedMood, setSelectedMood] = useState(null);
-  const [hasSubmittedToday, setHasSubmittedToday] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const checkTodaySubmission = async () => {
-      setIsLoading(true);
-      if (!session?.user?.id) return;
-
-      try {
-        const response = await fetch(
-          `/api/clearRecords/today?userId=${session.user.id}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to check today's submission");
-        }
-        const data = await response.json();
-        console.log("Today's submission check:", data);
-        setHasSubmittedToday(data.hasSubmitted);
-        if (data.hasSubmitted) {
-          setSelectedMood(null);
-        }
-      } catch (error) {
-        console.error("Error checking today's submission:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkTodaySubmission();
-  }, [session?.user?.id]);
 
   useEffect(() => {
     const fetchMoods = async () => {

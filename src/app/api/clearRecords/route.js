@@ -14,36 +14,34 @@ export async function POST(req) {
       );
     }
 
+    const today = new Date();
+    const dateOnly = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+
     const clearRecord = new ClearRecords({
       user,
       mood,
       comment: comment || "",
+      created: dateOnly,
     });
-    await clearRecord.save();
 
+    await clearRecord.save();
     await User.findByIdAndUpdate(
       user,
-      {
-        $push: { clearRecords: clearRecord._id },
-      },
+      { $push: { clearRecords: clearRecord._id } },
       { new: true }
     );
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
     await Stats.findOneAndUpdate(
       {
-        day: today,
+        day: dateOnly,
         mood: mood,
       },
-      {
-        $inc: { count: 1 },
-      },
-      {
-        upsert: true,
-        new: true,
-      }
+      { $inc: { count: 1 } },
+      { upsert: true, new: true }
     );
 
     return Response.json(clearRecord, { status: 201 });

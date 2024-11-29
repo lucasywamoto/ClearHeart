@@ -1,4 +1,5 @@
 import ClearRecords from "@/models/ClearRecord";
+import Moods from "@/models/Mood";
 
 export async function GET(req) {
   try {
@@ -22,9 +23,15 @@ export async function GET(req) {
       },
     }).lean();
 
+    const selectedMood = await Moods.findOne({
+      _id: todayRecord?.mood?.toString(),
+    }).lean();
+
     return Response.json({
       hasSubmitted: !!todayRecord,
       recordId: todayRecord?._id?.toString(),
+      todayUserMood: selectedMood?.mood,
+      todayUserMoodType: selectedMood?.type,
     });
   } catch (error) {
     console.error("Error checking today's record:", error);

@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { getColor } from "@/utils/helpers";
+import Spinner from "./Spinner";
 
 export default function Feed() {
   const [recent, setRecent] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
         setError(null);
         const recentResponse = await fetch("/api/clearRecords/recent");
         if (!recentResponse.ok) {
@@ -20,31 +19,28 @@ export default function Feed() {
       } catch (error) {
         setError(error.message);
         console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
       }
     };
     fetchData();
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!isLoading && recent.length === 0) {
-    return <div>No recent records found.</div>;
+    return (
+      <div style={{ gridRowStart: 1, gridRowEnd: 5, gridColumnStart: 3 }}>
+        Error: {error}
+      </div>
+    );
   }
 
   return (
-    <div style={{ gridRowStart: 1, gridRowEnd: 5, gridColumnStart: 3 }}>
+    <div
+      style={{ gridRowStart: 1, gridRowEnd: 5, gridColumnStart: 3 }}
+      className="feed"
+    >
       {recent.map((record) => (
         <div
           key={record._id}
-          className="rounded bubble"
+          className="rounded bubble mb-3"
           style={{
             backgroundColor: getColor(record.type),
           }}

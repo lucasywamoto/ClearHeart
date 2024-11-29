@@ -12,6 +12,9 @@ export default function Profile({ session }) {
           src={
             session?.user?.image || "https://avatar.iran.liara.run/public/43"
           }
+          onError={(e) => {
+            e.target.src = "https://avatar.iran.liara.run/public/43";
+          }}
           className="rounded-circle avatar"
           alt="Avatar"
           width="60"

@@ -28,7 +28,6 @@ export default function SendRecordForm({
           user,
           mood,
           comment: comment || "",
-          timestamp: new Date().getTime(),
         }),
       });
 

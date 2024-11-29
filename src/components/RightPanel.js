@@ -6,8 +6,9 @@ import SharedMood from "@/components/SharedMood";
 import Feed from "@/components/Feed";
 import Image from "next/image";
 import LogoutBtn from "@/components/LogoutBtn";
+import Spinner from "./Spinner";
 
-const RightPanel = () => {
+export default function RightPanel({ todayMood, hasSubmittedToday }) {
   const [stats, setStats] = useState(null);
   const [userMoods, setUserMoods] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +25,8 @@ const RightPanel = () => {
         }
         const statsData = await statsResponse.json();
         setStats(statsData);
+
+        console.log("Received stats data:", statsData);
 
         const moodsResponse = await fetch("/api/stats/weekly", {
           credentials: "include",
@@ -49,7 +52,7 @@ const RightPanel = () => {
     };
 
     fetchData();
-  }, []);
+  }, [hasSubmittedToday]);
 
   const getDayMood = (daysAgo) => {
     const targetDate = new Date();
@@ -63,13 +66,21 @@ const RightPanel = () => {
     return mood;
   };
 
+  if (isLoading) {
+    return (
+      <div className="container r-panel p-4 px-10 rounded-3 m-0 d-flex justify-content-center align-items-center">
+        <Spinner color={"light"} />
+      </div>
+    );
+  }
+
   return (
     <div className="container r-panel p-4 px-10 rounded-3 m-0">
       <div className="panel-grid">
         <MostFrequentMood stats={stats} />
         <UserMoodChart getDayMood={getDayMood} />
         <Feed />
-        <SharedMood />
+        <SharedMood stats={stats} todayMood={todayMood} />
       </div>
       <div className="d-flex w-100 gap-3 justify-content-center align-items-center">
         <Image src="/logo-white.svg" alt="Logo" width={120} height={60} />
@@ -86,6 +97,4 @@ const RightPanel = () => {
       </div>
     </div>
   );
-};
-
-export default RightPanel;
+}

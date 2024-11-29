@@ -5,7 +5,6 @@ import ClearRecords from "@/models/ClearRecord";
 export async function GET(req) {
   try {
     const session = await getServerSession(authConfig);
-    console.log("Full session data:", session);
 
     if (!session?.user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });

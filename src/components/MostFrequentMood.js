@@ -10,19 +10,20 @@ export default function MostFrequentMood({ stats }) {
 
   return (
     <div>
-      <h4 className="fw-light">
+      <h4 className="fw-light mb-0 text-center">
         Most people
         <br />
-        today are feeling
+        are feeling
       </h4>
       {stats && stats.length > 0 && (
         <h2
-          className="fw-bold"
+          className="fw-bold mb-0 text-center"
           style={{ color: getColor(getTopMood(stats).type) }}
         >
-          {getTopMood(stats).mood}
+          {getTopMood(stats).mood.toLowerCase()}
         </h2>
       )}
+      <h4 className="fw-light text-center">today.</h4>
     </div>
   );
 }
