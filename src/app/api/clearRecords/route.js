@@ -14,7 +14,6 @@ export async function POST(req) {
       );
     }
 
-    // Create the clear record
     const clearRecord = new ClearRecords({
       user,
       mood,
@@ -22,7 +21,6 @@ export async function POST(req) {
     });
     await clearRecord.save();
 
-    // Update user's clearRecords array
     await User.findByIdAndUpdate(
       user,
       {
@@ -31,7 +29,6 @@ export async function POST(req) {
       { new: true }
     );
 
-    // Update stats
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 

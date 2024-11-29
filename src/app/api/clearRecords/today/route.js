@@ -9,11 +9,9 @@ export async function GET(req) {
       return Response.json({ error: "User ID is required" }, { status: 400 });
     }
 
-    // Get today's date string in YYYY-MM-DD format
     const now = new Date();
     const todayStr = now.toISOString().split("T")[0];
 
-    // Find record where the date part of 'created' matches today
     const todayRecord = await ClearRecords.findOne({
       user: userId,
       $expr: {
