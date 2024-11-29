@@ -5,24 +5,10 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
-  session: {
-    strategy: "jwt", // Using JWT for session strategy
-  },
+const authConfig = {
   providers: [
     CredentialsProvider({
-      credentials: {
-        email: {},
-        password: {},
-      },
       async authorize(credentials) {
-        if (credentials == null) return null;
-
         try {
           const user = await User.findOne({ email: credentials.email });
           if (user) {
@@ -30,41 +16,23 @@ export const {
               credentials.password,
               user.password
             );
-
             if (isMatch) {
-              return user; // Returning user object if authentication is successful
-            } else {
-              throw new Error("Credentials do not match");
+              return user;
             }
-          } else {
-            throw new Error("User not found");
           }
+          return null;
         } catch (error) {
-          throw new Error(error);
+          return null;
         }
       },
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      authorization: {
-        params: {
-          prompt: "select_account",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      authorization: {
-        params: {
-          prompt: "select_account",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
   ],
   callbacks: {
@@ -76,9 +44,16 @@ export const {
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.email = token.email;
+      if (token) {
+        session.user.id = token.id;
+      }
       return session;
     },
   },
-});
+  pages: {
+    signIn: "/login",
+  },
+};
+
+export const { auth } = NextAuth(authConfig);
+export default authConfig;

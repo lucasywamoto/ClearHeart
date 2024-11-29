@@ -8,7 +8,35 @@ export default function LeftPanel({ session }) {
   const [selectedMood, setSelectedMood] = useState(null);
   const [search, setSearch] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSubmittedToday, setHasSubmittedToday] = useState(false);
 
+  // Check for today's submission whenever the component mounts or session changes
+  useEffect(() => {
+    const checkTodaySubmission = async () => {
+      if (!session?.user?.id) return;
+
+      try {
+        const response = await fetch(
+          `/api/clearRecords/today?userId=${session.user.id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to check today's submission");
+        }
+        const data = await response.json();
+        console.log("Today's submission check:", data);
+        setHasSubmittedToday(data.hasSubmitted);
+        if (data.hasSubmitted) {
+          setSelectedMood(null);
+        }
+      } catch (error) {
+        console.error("Error checking today's submission:", error);
+      }
+    };
+
+    checkTodaySubmission();
+  }, [session?.user?.id]);
+
+  // Fetch moods separately
   useEffect(() => {
     const fetchMoods = async () => {
       try {
@@ -22,6 +50,7 @@ export default function LeftPanel({ session }) {
         console.error("Error fetching moods:", error.message);
       }
     };
+
     fetchMoods();
   }, []);
 
@@ -31,18 +60,16 @@ export default function LeftPanel({ session }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (isSubmitting) return;
+    if (isSubmitting || hasSubmittedToday || !session?.user?.id) return;
 
     const comment = e.target.comment.value;
     const mood = selectedMood?._id;
-    const user = session?.user?.id;
-    console.log({ mood, user, comment });
+    const user = session.user.id;
 
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/clearRecord", {
+      const response = await fetch("/api/clearRecords", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -55,24 +82,24 @@ export default function LeftPanel({ session }) {
       const responseData = await response.json();
 
       if (!response.ok) {
-        const errorMessage =
-          responseData.details || responseData.error || "Failed to submit mood";
-        throw new Error(errorMessage);
+        throw new Error(responseData.error || "Failed to submit record");
       }
 
       setSelectedMood(null);
+      setHasSubmittedToday(true);
       e.target.comment.value = "";
     } catch (error) {
-      console.error("Error submitting mood:", error.message);
+      console.error("Error submitting record:", error.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleClick = (e) => {
+    if (hasSubmittedToday) return;
     const mood = JSON.parse(e.target.dataset.mood);
     setSelectedMood(mood);
-    setSearch(""); // Clear search when a mood is selected
+    setSearch("");
   };
 
   return (
@@ -95,7 +122,20 @@ export default function LeftPanel({ session }) {
       <hr className="my-4" />
       <div id="mood-form-container">
         <div className="subdiv">
-          {selectedMood?.mood == null ? (
+          {hasSubmittedToday ? (
+            <div id="already-submitted">
+              <h4 className="fw-light mb-3">
+                You've already shared
+                <br />
+                your mood today!
+              </h4>
+              <p className="text-muted">
+                Come back tomorrow
+                <br />
+                to share again.
+              </p>
+            </div>
+          ) : selectedMood?.mood == null ? (
             <div id="initial-view">
               <h4 className="fw-light mb-3">
                 How are you
@@ -112,28 +152,26 @@ export default function LeftPanel({ session }) {
                 onChange={(e) => setSearch(e.target.value)}
               />
               <div id="mood-buttons">
-                {filteredMoods.length > 0
-                  ? filteredMoods.map((mood) => {
-                      const color = getColor(mood.type);
-                      return (
-                        <a
-                          key={mood._id}
-                          className="badge rounded-pill py-1 px-2 mb-1 me-1 mood-button fw-regular"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title={mood.mood}
-                          data-mood={JSON.stringify(mood)} // Store the entire mood object
-                          onClick={handleClick}
-                          style={{
-                            backgroundColor: color,
-                            textDecoration: "none",
-                          }}
-                        >
-                          {mood.mood}
-                        </a>
-                      );
-                    })
-                  : ""}
+                {filteredMoods.map((mood) => {
+                  const color = getColor(mood.type);
+                  return (
+                    <a
+                      key={mood._id}
+                      className="badge rounded-pill py-1 px-2 mb-1 me-1 mood-button fw-regular"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title={mood.mood}
+                      data-mood={JSON.stringify(mood)}
+                      onClick={handleClick}
+                      style={{
+                        backgroundColor: color,
+                        textDecoration: "none",
+                      }}
+                    >
+                      {mood.mood}
+                    </a>
+                  );
+                })}
               </div>
             </div>
           ) : (

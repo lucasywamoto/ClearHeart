@@ -1,21 +1,24 @@
-"use server";
-import { signIn, signOut } from "@/auth";
+"use client";
+
+import { signIn, signOut } from "next-auth/react";
 
 export async function doSocialLogin(formData) {
   const action = formData.get("action");
-  await signIn(action, { redirectTo: "/" });
+  await signIn(action, {
+    callbackUrl: "/dashboard",
+  });
 }
 
 export async function doLogin(formData) {
   const loginData = Object.fromEntries(formData);
-
   await signIn("credentials", {
-    redirect: true,
-    redirectTo: "/dashboard",
     ...loginData,
+    callbackUrl: "/dashboard",
   });
 }
 
 export async function doLogout() {
-  await signOut({ redirectTo: "/login" });
+  await signOut({
+    callbackUrl: "/login",
+  });
 }

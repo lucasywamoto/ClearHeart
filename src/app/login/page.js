@@ -83,7 +83,6 @@ export default function Login() {
             />
           </button>
         </form>
-        <p className="mt-3 mb-3 text-body-secondary">&copy; 2024</p>
       </div>
     </div>
   );

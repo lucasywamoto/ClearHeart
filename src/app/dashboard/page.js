@@ -1,8 +1,8 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import LeftPanel from "@/components/LeftPanel";
+import RightPanel from "@/components/RightPanel";
 import LogoutBtn from "@/components/LogoutBtn";
 import { getSession } from "next-auth/react";
 
@@ -45,9 +45,7 @@ const Dashboard = () => {
   return (
     <div className="index-container">
       <LeftPanel session={session} />
-      <div className="container r-panel p-5 px-10 rounded-3 m-0">
-        {/* Add your content here */}
-      </div>
+      <RightPanel />
       <LogoutBtn />
     </div>
   );
