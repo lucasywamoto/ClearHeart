@@ -15,7 +15,7 @@ export default function UserMoodChart({ getDayMood }) {
 
   return (
     <div className="align-items-center">
-      <h5 className="fw-light text-center">How You’ve Felt Recently</h5>
+      <h5 className="fw-light text-center">How you’ve felt recently</h5>
       <div className="d-flex justify-content-around gap-4">
         {getDaySequence().map((day, index) => {
           const mood = getDayMood(6 - index);
