@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import LeftPanel from "@/components/LeftPanel";
 import RightPanel from "@/components/RightPanel";
-import LogoutBtn from "@/components/LogoutBtn";
 import { getSession } from "next-auth/react";
 
 const Dashboard = () => {
@@ -45,8 +44,7 @@ const Dashboard = () => {
   return (
     <div className="index-container">
       <LeftPanel session={session} />
-      <RightPanel />
-      <LogoutBtn />
+      <RightPanel />{" "}
     </div>
   );
 };
