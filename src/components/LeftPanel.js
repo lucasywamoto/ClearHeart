@@ -14,26 +14,10 @@ export default function LeftPanel({
   isLoading,
   selectedMood,
   setSelectedMood,
+  setTodayMood,
+  setTodayMoodType,
 }) {
   const { data: session } = useSession();
-  const [moods, setMoods] = useState([]);
-
-  useEffect(() => {
-    const fetchMoods = async () => {
-      try {
-        const response = await fetch("/api/moods");
-        if (!response.ok) {
-          throw new Error("Failed to fetch moods");
-        }
-        const moodsData = await response.json();
-        setMoods(moodsData);
-      } catch (error) {
-        console.error("Error fetching moods:", error.message);
-      }
-    };
-
-    fetchMoods();
-  }, []);
 
   return (
     <div className="container panel l-panel w-25 p-4 px-10 rounded-3 m-0">
@@ -68,7 +52,7 @@ export default function LeftPanel({
                   </p>
                 </div>
               ) : selectedMood?.mood == null ? (
-                <MoodSelector moods={moods} setSelectedMood={setSelectedMood} />
+                <MoodSelector setSelectedMood={setSelectedMood} />
               ) : (
                 <SendRecordForm
                   selectedMood={selectedMood}
@@ -76,6 +60,8 @@ export default function LeftPanel({
                   setHasSubmittedToday={setHasSubmittedToday}
                   hasSubmittedToday={hasSubmittedToday}
                   session={session}
+                  setTodayMood={setTodayMood}
+                  setTodayMoodType={setTodayMoodType}
                 />
               )}
             </div>

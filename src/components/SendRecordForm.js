@@ -7,6 +7,8 @@ export default function SendRecordForm({
   setSelectedMood,
   hasSubmittedToday,
   setHasSubmittedToday,
+  setTodayMood,
+  setTodayMoodType,
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -31,7 +33,6 @@ export default function SendRecordForm({
           timezone,
         }),
       });
-
       const responseData = await response.json();
       if (!response.ok) {
         throw new Error(responseData.error || "Failed to submit record");
@@ -39,7 +40,14 @@ export default function SendRecordForm({
 
       setSelectedMood(null);
       setHasSubmittedToday(true);
+      setTodayMood(selectedMood.mood);
       e.target.comment.value = "";
+
+      const todayResponse = await fetch("/api/clearRecords/today");
+      const todayData = await todayResponse.json();
+      if (todayData.todayUserMoodType) {
+        setTodayMoodType(todayData.todayUserMoodType);
+      }
     } catch (error) {
       console.error("Error submitting record:", error.message);
     } finally {

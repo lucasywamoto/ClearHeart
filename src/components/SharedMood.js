@@ -2,24 +2,24 @@
 import { getColor } from "@/utils/helpers";
 import { useEffect, useState } from "react";
 
-export default function SharedMood({ stats, todayMood, todayMoodType }) {
+export default function SharedMood({
+  todayMood,
+  todayMoodType,
+  stats,
+  isLoading,
+}) {
   const [sameMoodCount, setSameMoodCount] = useState(0);
 
   useEffect(() => {
+    if (!stats || isLoading) return;
+
     const updateStats = () => {
       const sameMoodStat = stats?.find((stat) => stat.mood === todayMood);
       setSameMoodCount(sameMoodStat ? sameMoodStat.count : 0);
-      console.log("todayMood", todayMood);
-      console.log("stats", stats);
-      console.log("sameMoodStat", sameMoodStat);
     };
 
     updateStats();
-
-    const timeoutId = setTimeout(updateStats, 1000);
-
-    return () => clearTimeout(timeoutId);
-  }, [todayMood, stats]);
+  }, [todayMood, stats, isLoading]);
 
   if (todayMood) {
     return (

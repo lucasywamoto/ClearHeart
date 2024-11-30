@@ -24,7 +24,6 @@ export default function Dashboard() {
   useEffect(() => {
     const checkTodaySubmission = async () => {
       if (status !== "authenticated") return;
-
       setIsLoading(true);
       try {
         const response = await fetch("/api/clearRecords/today", {
@@ -32,16 +31,13 @@ export default function Dashboard() {
             "Content-Type": "application/json",
           },
         });
-
         if (!response.ok) {
           throw new Error("Failed to check today's submission");
         }
-
         const data = await response.json();
         setHasSubmittedToday(data.hasSubmitted);
         setTodayMood(data.todayUserMood);
         setTodayMoodType(data.todayUserMoodType);
-
         if (data.hasSubmitted) {
           setSelectedMood(null);
         }
@@ -72,12 +68,13 @@ export default function Dashboard() {
   return (
     <div className="index-container">
       <LeftPanel
-        session={session}
         hasSubmittedToday={hasSubmittedToday}
         setHasSubmittedToday={setHasSubmittedToday}
         isLoading={isLoading}
         selectedMood={selectedMood}
         setSelectedMood={setSelectedMood}
+        setTodayMood={setTodayMood}
+        setTodayMoodType={setTodayMoodType}
       />
       <RightPanel
         todayMood={todayMood}

@@ -6,7 +6,6 @@ import SharedMood from "@/components/SharedMood";
 import Feed from "@/components/Feed";
 import Image from "next/image";
 import LogoutBtn from "@/components/LogoutBtn";
-import Spinner from "./Spinner";
 import SpectrumPercentages from "./SpectrumPercentages";
 
 export default function RightPanel({
@@ -17,6 +16,7 @@ export default function RightPanel({
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [seconds, setSeconds] = useState(30);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,64 +27,88 @@ export default function RightPanel({
             "Content-Type": "application/json",
           },
         });
-
         if (!statsResponse.ok) {
           throw new Error("Failed to fetch stats");
         }
         const statsData = await statsResponse.json();
         setStats(statsData);
+        setSeconds(30);
+
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
       } catch (error) {
         setError(error.message);
         console.error("Error fetching data:", error);
-      } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
+
+    const countdownInterval = setInterval(() => {
+      setSeconds((prevSeconds) => {
+        if (prevSeconds <= 1) {
+          fetchData();
+          return 30;
+        }
+        return prevSeconds - 1;
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(countdownInterval);
+    };
   }, [hasSubmittedToday]);
 
-  if (isLoading) {
-    return (
-      <div className="container r-panel p-4 px-10 rounded-3 m-0 d-flex justify-content-center align-items-center">
-        <Spinner color={"light"} />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container r-panel p-4 px-10 rounded-3 m-0 d-flex justify-content-center align-items-center">
-        <p className="text-danger">Error: {error}</p>
-      </div>
-    );
-  }
+  const sharedMoodProps = {
+    todayMood,
+    todayMoodType,
+    stats,
+    isLoading,
+  };
 
   return (
     <div className="container r-panel p-4 pb-1 px-10 rounded-3 m-0">
-      <div className="panel-grid">
-        <MostFrequentMood stats={stats} />
-        <UserMoodChart />
-        <Feed />
-        <SharedMood
-          todayMood={todayMood}
-          todayMoodType={todayMoodType}
-          stats={stats}
-        />
-        <SpectrumPercentages stats={stats} />
-      </div>
-      <div className="d-flex w-100 gap-3 justify-content-center align-items-center mt-2">
-        <Image src="/logo-white.svg" alt="Logo" width={120} height={60} />
+      {isLoading ? (
         <div
-          style={{
-            width: 1,
-            height: 40,
-            background: "#6c757d",
-            marginTop: "8px",
-          }}
-          className="mb-2"
-        ></div>
-        <LogoutBtn />
+          className="panel-grid"
+          style={{ gridTemplateRows: "1fr", gridTemplateColumns: "1fr" }}
+        >
+          <h2 style={{ alignSelf: "center", justifySelf: "center" }}>
+            Syncing
+          </h2>
+        </div>
+      ) : (
+        <div className="panel-grid">
+          <MostFrequentMood stats={stats} />
+          <UserMoodChart />
+          <Feed />
+          <SharedMood {...sharedMoodProps} />
+          <SpectrumPercentages stats={stats} />
+        </div>
+      )}
+      <div className="d-flex w-100 align-items-center justify-content-between">
+        {!isLoading ? (
+          <p style={{ color: "white" }} className="mb-0">
+            Next syncing in {seconds}
+          </p>
+        ) : (
+          <div></div>
+        )}
+        <div className="d-flex gap-3 justify-content-center align-items-center mt-2">
+          <Image src="/logo-white.svg" alt="Logo" width={120} height={60} />
+          <div
+            style={{
+              width: 1,
+              height: 40,
+              background: "white",
+              marginTop: "8px",
+            }}
+            className="mb-2"
+          ></div>
+          <LogoutBtn />
+        </div>
       </div>
     </div>
   );
