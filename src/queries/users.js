@@ -1,9 +1,13 @@
-import { User } from "@/models/User";
+import User from "@/models/User";
 
-export async function createUser(user) {
+export const createUser = async (userData) => {
   try {
-    await User.create(user);
+    const user = new User(userData);
+    const savedUser = await user.save();
+
+    return savedUser;
   } catch (error) {
-    throw new Error(error);
+    console.error("Error in createUser query:", error);
+    throw error;
   }
-}
+};

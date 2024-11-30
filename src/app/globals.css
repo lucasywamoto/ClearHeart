@@ -203,6 +203,12 @@ body {
   grid-auto-rows: 1fr;
   gap: 10px;
   height: 90%;
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer */
+}
+
+.panel-grid::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
 }
 
 .panel-grid > div {

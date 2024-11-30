@@ -4,6 +4,7 @@ import ClearRecords from "@/models/ClearRecord";
 export async function GET(req) {
   try {
     const token = await getToken({ req });
+    console.log("Token:", token);
 
     if (!token?.sub) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });

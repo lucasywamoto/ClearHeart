@@ -1,5 +1,11 @@
 import mongoose from "mongoose";
 
+// Function to generate random avatar URL
+const generateRandomAvatar = () => {
+  const randomId = Math.floor(Math.random() * 100) + 1;
+  return `https://avatar.iran.liara.run/public/${randomId}`;
+};
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
@@ -15,7 +21,24 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    avatar: {
+      type: String,
+      required: false,
+      set: function (v) {
+        if (!v && !this.oauthProvider) {
+          return generateRandomAvatar();
+        }
+        return v;
+      },
+      get: function (v) {
+        return v || generateRandomAvatar();
+      },
+    },
     oauthProvider: {
+      type: String,
+      default: null,
+    },
+    providerId: {
       type: String,
       default: null,
     },
@@ -26,16 +49,25 @@ const UserSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    strict: true,
+    toJSON: { getters: true },
+    toObject: { getters: true },
+  }
 );
 
 UserSchema.pre("save", function (next) {
   if (!this.oauthProvider && !this.password) {
-    next(new Error("Password is required for non-OAuth users"));
+    return next(new Error("Password is required for non-OAuth users"));
+  }
+  if (!this.avatar && !this.oauthProvider) {
+    this.avatar = generateRandomAvatar();
   }
   next();
 });
 
-export const User = mongoose.models.User || mongoose.model("User", UserSchema);
+mongoose.models = {};
 
+export const User = mongoose.model("User", UserSchema);
 export default User;

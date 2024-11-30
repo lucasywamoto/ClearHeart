@@ -80,7 +80,7 @@ export default function RightPanel({
           </h2>
         </div>
       ) : (
-        <div className="panel-grid">
+        <div className="panel-grid" style={{ overflow: "auto" }}>
           <MostFrequentMood stats={stats} />
           <UserMoodChart />
           <Feed />
