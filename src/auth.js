@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
@@ -30,15 +29,11 @@ const authConfig = {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    }),
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
       try {
-        if (account.provider === "google" || account.provider === "github") {
+        if (account.provider === "google") {
           let dbUser = await User.findOne({ email: user.email });
 
           if (dbUser) {

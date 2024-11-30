@@ -63,7 +63,13 @@ export default function Register() {
           />
           <label htmlFor="password">Password</label>
         </div>
-        <button type="submit" className="btn btn-primary w-100 py-2 mt-3">
+        <button
+          type="submit"
+          className="w-100 py-2 mt-3 rounded-2 text-white"
+          style={{
+            background: "linear-gradient(-35deg, #00ccdd, #4f75ff, #6439ff)",
+          }}
+        >
           Register
         </button>
       </form>

@@ -42,7 +42,13 @@ export default function Login() {
             ></input>
             <label htmlFor="floatingPassword">Password</label>
           </div>
-          <button className="btn btn-primary w-100 py-2 mt-3" type="submit">
+          <button
+            className="w-100 py-2 mt-3 rounded-2 text-white"
+            type="submit"
+            style={{
+              background: "linear-gradient(-35deg, #00ccdd, #4f75ff, #6439ff)",
+            }}
+          >
             Sign in
           </button>
           <hr className={styles.divider}></hr>
@@ -60,23 +66,6 @@ export default function Login() {
               loading="lazy"
               src="https://authjs.dev/img/providers/google.svg"
               alt="Google"
-              width={24}
-              height={24}
-              className={styles.logo}
-            />
-          </button>
-          <button
-            type="submit"
-            className={`btn w-100 py-2 mt-3 ${styles.social}`}
-            name="action"
-            value="github"
-            tabIndex="0"
-          >
-            Sign in with GitHub
-            <Image
-              loading="lazy"
-              src="https://authjs.dev/img/providers/github.svg"
-              alt="GitHub"
               width={24}
               height={24}
               className={styles.logo}
