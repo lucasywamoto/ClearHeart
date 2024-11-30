@@ -2,6 +2,7 @@ import "./globals.css";
 import { connectDB } from "@/utils/db";
 import Script from "next/script";
 import "bootstrap/dist/css/bootstrap.min.css";
+import AuthProvider from "@/components/AuthProvider";
 
 export const metadata = {
   title: "ClearHeart",
@@ -40,7 +41,9 @@ export default async function RootLayout({ children }) {
             }}
           ></div>
         </div>
-        <div className="content-container">{children}</div>
+        <div className="content-container">
+          <AuthProvider>{children}</AuthProvider>
+        </div>
         <Script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
           strategy="afterInteractive"

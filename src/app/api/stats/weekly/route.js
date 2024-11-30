@@ -1,46 +1,37 @@
-import { getServerSession } from "next-auth/next";
-import authConfig from "@/auth";
+import { getToken } from "next-auth/jwt";
 import ClearRecords from "@/models/ClearRecord";
+import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
-    const session = await getServerSession(authConfig);
+    const token = await getToken({ req });
 
-    if (!session?.user) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Get the token data which should contain the ID
-    const userId = session.user.id;
-    console.log("User ID from session:", userId);
-
-    if (!userId) {
-      console.log("Session user data:", session.user);
-      return Response.json({ error: "No user ID in session" }, { status: 401 });
+    if (!token?.sub) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const records = await ClearRecords.find({
-      user: userId,
+      user: token.sub,
       created: { $gte: sevenDaysAgo },
     })
       .populate("mood", "mood type")
       .lean();
 
     const formattedRecords = records.map((record) => ({
-      _id: record._id.toString(),
+      id: record._id.toString(),
       created: record.created,
       type: record.mood.type,
       mood: record.mood.mood,
     }));
 
-    return Response.json(formattedRecords);
+    return NextResponse.json(formattedRecords);
   } catch (error) {
     console.error("Error in weekly API:", error);
-    return Response.json(
-      { error: "Failed to fetch weekly moods", details: error.message },
+    return NextResponse.json(
+      { error: "Failed to fetch weekly moods" },
       { status: 500 }
     );
   }

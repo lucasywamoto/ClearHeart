@@ -5,15 +5,17 @@ import SendRecordForm from "@/components/SendRecordForm";
 import Spinner from "./Spinner";
 import SpectrumLabel from "./SpectrumLabel";
 import Profile from "./Profile";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function LeftPanel({
-  session,
   hasSubmittedToday,
   setHasSubmittedToday,
   isLoading,
   selectedMood,
   setSelectedMood,
 }) {
+  const { data: session } = useSession();
   const [moods, setMoods] = useState([]);
 
   useEffect(() => {
@@ -43,13 +45,23 @@ export default function LeftPanel({
           <div id="mood-form-container">
             <div className="subdiv">
               {hasSubmittedToday ? (
-                <div id="already-submitted">
-                  <h4 className="fw-light mb-3">
+                <div
+                  id="already-submitted"
+                  className="d-flex flex-column align-items-center justify-content-center h-100"
+                >
+                  <h4 className="fw-light text-center mb-3">
                     You&apos;ve already shared
                     <br />
                     your mood today!
                   </h4>
-                  <p className="text-muted">
+                  <Image
+                    src="/love.gif"
+                    width={100}
+                    height={100}
+                    alt="heart"
+                    unoptimized
+                  />
+                  <p className="text-muted text-center">
                     Come back tomorrow
                     <br />
                     to share again.

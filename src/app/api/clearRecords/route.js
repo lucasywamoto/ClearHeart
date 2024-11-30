@@ -5,7 +5,7 @@ import User from "@/models/User";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { user, mood, comment } = body;
+    const { user, mood, comment, timezone = "UTC" } = body;
 
     if (!user || !mood) {
       return Response.json(
@@ -15,20 +15,26 @@ export async function POST(req) {
     }
 
     const today = new Date();
+
     const dateOnly = new Date(
       today.getFullYear(),
       today.getMonth(),
       today.getDate()
     );
 
+    const currentTime = new Date();
+
     const clearRecord = new ClearRecords({
       user,
       mood,
       comment: comment || "",
-      created: dateOnly,
+      created: currentTime, //for feed
+      dateCreated: dateOnly, // for last 7 days and stats
+      timezone,
     });
 
     await clearRecord.save();
+
     await User.findByIdAndUpdate(
       user,
       { $push: { clearRecords: clearRecord._id } },

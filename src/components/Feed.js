@@ -34,7 +34,7 @@ export default function Feed() {
 
   return (
     <div
-      style={{ gridRowStart: 1, gridRowEnd: 5, gridColumnStart: 3 }}
+      style={{ gridRowStart: 1, gridRowEnd: 4, gridColumnStart: 3 }}
       className="feed"
     >
       {recent.map((record) => (
@@ -46,7 +46,7 @@ export default function Feed() {
           }}
         >
           <p className="mb-2">
-            {record.userName} is {record.mood}
+            {record.userName} is {record.mood.toLowerCase()}
           </p>
           <div
             style={{ width: "100%", height: 1, background: "white" }}

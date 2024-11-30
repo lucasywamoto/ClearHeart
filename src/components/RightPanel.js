@@ -7,10 +7,14 @@ import Feed from "@/components/Feed";
 import Image from "next/image";
 import LogoutBtn from "@/components/LogoutBtn";
 import Spinner from "./Spinner";
+import SpectrumPercentages from "./SpectrumPercentages";
 
-export default function RightPanel({ todayMood, hasSubmittedToday }) {
+export default function RightPanel({
+  todayMood,
+  todayMoodType,
+  hasSubmittedToday,
+}) {
   const [stats, setStats] = useState(null);
-  const [userMoods, setUserMoods] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -18,31 +22,17 @@ export default function RightPanel({ todayMood, hasSubmittedToday }) {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-
-        const statsResponse = await fetch("/api/stats");
-        if (!statsResponse.ok) {
-          throw new Error("Failed to fetch stats");
-        }
-        const statsData = await statsResponse.json();
-        setStats(statsData);
-
-        console.log("Received stats data:", statsData);
-
-        const moodsResponse = await fetch("/api/stats/weekly", {
-          credentials: "include",
+        const statsResponse = await fetch("/api/stats", {
           headers: {
             "Content-Type": "application/json",
           },
         });
 
-        if (!moodsResponse.ok) {
-          const errorData = await moodsResponse.json();
-          throw new Error(errorData.error || "Failed to fetch user moods");
+        if (!statsResponse.ok) {
+          throw new Error("Failed to fetch stats");
         }
-
-        const moodsData = await moodsResponse.json();
-        console.log("Received moods data:", moodsData);
-        setUserMoods(moodsData);
+        const statsData = await statsResponse.json();
+        setStats(statsData);
       } catch (error) {
         setError(error.message);
         console.error("Error fetching data:", error);
@@ -54,18 +44,6 @@ export default function RightPanel({ todayMood, hasSubmittedToday }) {
     fetchData();
   }, [hasSubmittedToday]);
 
-  const getDayMood = (daysAgo) => {
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() - daysAgo);
-
-    const mood = userMoods.find((mood) => {
-      const moodDate = new Date(mood.created);
-      return moodDate.toDateString() === targetDate.toDateString();
-    });
-
-    return mood;
-  };
-
   if (isLoading) {
     return (
       <div className="container r-panel p-4 px-10 rounded-3 m-0 d-flex justify-content-center align-items-center">
@@ -74,15 +52,28 @@ export default function RightPanel({ todayMood, hasSubmittedToday }) {
     );
   }
 
+  if (error) {
+    return (
+      <div className="container r-panel p-4 px-10 rounded-3 m-0 d-flex justify-content-center align-items-center">
+        <p className="text-danger">Error: {error}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="container r-panel p-4 px-10 rounded-3 m-0">
+    <div className="container r-panel p-4 pb-1 px-10 rounded-3 m-0">
       <div className="panel-grid">
         <MostFrequentMood stats={stats} />
-        <UserMoodChart getDayMood={getDayMood} />
+        <UserMoodChart />
         <Feed />
-        <SharedMood stats={stats} todayMood={todayMood} />
+        <SharedMood
+          todayMood={todayMood}
+          todayMoodType={todayMoodType}
+          stats={stats}
+        />
+        <SpectrumPercentages stats={stats} />
       </div>
-      <div className="d-flex w-100 gap-3 justify-content-center align-items-center">
+      <div className="d-flex w-100 gap-3 justify-content-center align-items-center mt-2">
         <Image src="/logo-white.svg" alt="Logo" width={120} height={60} />
         <div
           style={{

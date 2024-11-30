@@ -36,16 +36,43 @@ const authConfig = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user._id;
-        token.email = user.email;
+    async signIn({ user, account, profile }) {
+      try {
+        if (account.provider === "google" || account.provider === "github") {
+          let dbUser = await User.findOne({ email: user.email });
+
+          if (dbUser) {
+            if (dbUser.providerId !== account.providerAccountId) {
+              await User.findByIdAndUpdate(dbUser._id, {
+                providerId: account.providerAccountId,
+                oauthProvider: account.provider,
+              });
+            }
+          } else {
+            dbUser = await User.create({
+              name: user.name.split(" ")[0],
+              email: user.email,
+              oauthProvider: account.provider,
+              providerId: account.providerAccountId,
+            });
+          }
+          user.id = dbUser._id.toString();
+        }
+        return true;
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
+        return false;
+      }
+    },
+    async jwt({ token, user, account }) {
+      if (user?.id) {
+        token.userId = user.id;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id;
+      if (session.user) {
+        session.user.id = token.userId;
       }
       return session;
     },

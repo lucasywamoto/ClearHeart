@@ -6,7 +6,6 @@ export async function GET(request) {
     const dateParam = searchParams.get("date");
 
     const queryDate = dateParam ? new Date(dateParam) : new Date();
-    // Set to start of day
     queryDate.setHours(0, 0, 0, 0);
 
     const stats = await Stats.aggregate([
@@ -34,6 +33,7 @@ export async function GET(request) {
       },
       {
         $project: {
+          day: queryDate,
           mood: "$moodInfo.mood",
           type: "$moodInfo.type",
           count: "$totalCount",

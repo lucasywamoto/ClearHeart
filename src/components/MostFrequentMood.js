@@ -1,4 +1,5 @@
 import { getColor } from "@/utils/helpers";
+import { useEffect } from "react";
 
 export default function MostFrequentMood({ stats }) {
   const getTopMood = (stats) => {
@@ -10,15 +11,11 @@ export default function MostFrequentMood({ stats }) {
 
   return (
     <div>
-      <h4 className="fw-light mb-0 text-center">
-        Most people
-        <br />
-        are feeling
-      </h4>
+      <h4 className="fw-light mb-0 text-center">Most people are</h4>
       {stats && stats.length > 0 && (
         <h2
           className="fw-bold mb-0 text-center"
-          style={{ color: getColor(getTopMood(stats).type) }}
+          style={{ color: getColor(getTopMood(stats).type), fontSize: "36px" }}
         >
           {getTopMood(stats).mood.toLowerCase()}
         </h2>

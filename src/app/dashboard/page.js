@@ -3,63 +3,62 @@ import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import LeftPanel from "@/components/LeftPanel";
 import RightPanel from "@/components/RightPanel";
-import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Spinner from "@/components/Spinner";
 
-const Dashboard = () => {
-  const [session, setSession] = useState(null);
+export default function Dashboard() {
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/login");
+    },
+  });
+
   const [hasSubmittedToday, setHasSubmittedToday] = useState(false);
-  const [todayMood, setTodayMood] = useState([]);
+  const [todayMood, setTodayMood] = useState(null);
+  const [todayMoodType, setTodayMoodType] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMood, setSelectedMood] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const checkTodaySubmission = async () => {
-      setIsLoading(true);
-      if (!session?.user?.id) return;
+      if (status !== "authenticated") return;
 
+      setIsLoading(true);
       try {
-        const response = await fetch(
-          `/api/clearRecords/today?userId=${session.user.id}`
-        );
+        const response = await fetch("/api/clearRecords/today", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
         if (!response.ok) {
           throw new Error("Failed to check today's submission");
         }
+
         const data = await response.json();
         setHasSubmittedToday(data.hasSubmitted);
-        setTodayMood([data["todayUserMood"], data["todayUserMoodType"]]);
+        setTodayMood(data.todayUserMood);
+        setTodayMoodType(data.todayUserMoodType);
+
         if (data.hasSubmitted) {
           setSelectedMood(null);
         }
       } catch (error) {
         console.error("Error checking today's submission:", error);
+        setError(error.message);
       } finally {
         setIsLoading(false);
       }
     };
 
     checkTodaySubmission();
-  }, [session?.user?.id]);
+  }, [status]);
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const sessionData = await getSession();
-
-        if (!sessionData) {
-          redirect("/login");
-        } else {
-          setSession(sessionData);
-        }
-      } catch (err) {
-        console.error("Error in Dashboard:", err);
-        setError(err.message || "An unexpected error occurred.");
-      }
-    };
-
-    init();
-  }, []);
+  if (status === "loading" || isLoading) {
+    return <Spinner color="light" />;
+  }
 
   if (error) {
     return (
@@ -68,10 +67,6 @@ const Dashboard = () => {
         <p>{error}</p>
       </div>
     );
-  }
-
-  if (!session) {
-    return <Spinner color={"light"} />;
   }
 
   return (
@@ -84,9 +79,11 @@ const Dashboard = () => {
         selectedMood={selectedMood}
         setSelectedMood={setSelectedMood}
       />
-      <RightPanel todayMood={todayMood} hasSubmittedToday={hasSubmittedToday} />
+      <RightPanel
+        todayMood={todayMood}
+        todayMoodType={todayMoodType}
+        hasSubmittedToday={hasSubmittedToday}
+      />
     </div>
   );
-};
-
-export default Dashboard;
+}

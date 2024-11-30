@@ -1,12 +1,11 @@
-// app/page.js
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/auth";
+import { getServerSession } from "next-auth";
+import { auth } from "@/auth";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(auth);
 
-  if (!session?.user) {
+  if (!session) {
     redirect("/login");
   }
 

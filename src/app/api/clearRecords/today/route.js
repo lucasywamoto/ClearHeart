@@ -1,42 +1,35 @@
+import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
 import ClearRecords from "@/models/ClearRecord";
-import Moods from "@/models/Mood";
 
 export async function GET(req) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
+    const token = await getToken({ req });
 
-    if (!userId) {
-      return Response.json({ error: "User ID is required" }, { status: 400 });
+    if (!token?.sub) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const now = new Date();
-    const todayStr = now.toISOString().split("T")[0];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     const todayRecord = await ClearRecords.findOne({
-      user: userId,
-      $expr: {
-        $eq: [
-          { $dateToString: { format: "%Y-%m-%d", date: "$created" } },
-          todayStr,
-        ],
+      user: token.sub,
+      created: {
+        $gte: today,
+        $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
       },
-    }).lean();
+    }).populate("mood", "mood type");
 
-    const selectedMood = await Moods.findOne({
-      _id: todayRecord?.mood?.toString(),
-    }).lean();
-
-    return Response.json({
+    return NextResponse.json({
       hasSubmitted: !!todayRecord,
-      recordId: todayRecord?._id?.toString(),
-      todayUserMood: selectedMood?.mood,
-      todayUserMoodType: selectedMood?.type,
+      todayUserMood: todayRecord?.mood?.mood || null,
+      todayUserMoodType: todayRecord?.mood?.type || null,
     });
   } catch (error) {
-    console.error("Error checking today's record:", error);
-    return Response.json(
-      { error: "Failed to check today's record", details: error.message },
+    console.error("Error checking today's submission:", error);
+    return NextResponse.json(
+      { error: "Failed to check today's submission" },
       { status: 500 }
     );
   }

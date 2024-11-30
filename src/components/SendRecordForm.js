@@ -17,9 +17,9 @@ export default function SendRecordForm({
     const comment = e.target.comment.value;
     const mood = selectedMood?._id;
     const user = session.user.id;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     setIsSubmitting(true);
-
     try {
       const response = await fetch("/api/clearRecords", {
         method: "POST",
@@ -28,11 +28,11 @@ export default function SendRecordForm({
           user,
           mood,
           comment: comment || "",
+          timezone,
         }),
       });
 
       const responseData = await response.json();
-
       if (!response.ok) {
         throw new Error(responseData.error || "Failed to submit record");
       }

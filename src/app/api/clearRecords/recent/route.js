@@ -1,12 +1,11 @@
-import { getServerSession } from "next-auth/next";
-import authConfig from "@/auth";
+import { getToken } from "next-auth/jwt";
 import ClearRecords from "@/models/ClearRecord";
 
 export async function GET(req) {
   try {
-    const session = await getServerSession(authConfig);
+    const token = await getToken({ req });
 
-    if (!session?.user?.id) {
+    if (!token?.sub) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -23,7 +22,7 @@ export async function GET(req) {
       comment: record.comment,
       type: record.mood.type,
       mood: record.mood.mood,
-      userName: record.user.name,
+      userName: record.user?.name?.split(" ")[0],
     }));
 
     return Response.json(formattedRecords);
