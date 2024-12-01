@@ -30,7 +30,7 @@ export default function SpectrumPercentages({ stats }) {
             className="mb-0 fw-bold"
             style={{ fontSize: 42, color: getColor("positive") }}
           >
-            {percentages.positive}%
+            {percentages?.positive || "0"}%
           </span>
           <p>Positive</p>
         </div>
@@ -48,7 +48,7 @@ export default function SpectrumPercentages({ stats }) {
             className="mb-0 fw-bold"
             style={{ fontSize: 42, color: getColor("neutral") }}
           >
-            {percentages.neutral}%
+            {percentages.neutral || "0"}%
           </span>
           <p>Neutral</p>
         </div>
@@ -66,7 +66,7 @@ export default function SpectrumPercentages({ stats }) {
             className="mb-0 fw-bold"
             style={{ fontSize: 42, color: getColor("negative") }}
           >
-            {percentages.negative}%
+            {percentages.negative || "0"}%
           </span>
           <p>Negative</p>
         </div>

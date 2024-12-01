@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { getColor } from "@/utils/helpers";
-import Spinner from "./Spinner";
 
 export default function Feed() {
   const [recent, setRecent] = useState([]);
@@ -52,7 +51,7 @@ export default function Feed() {
             style={{ width: "100%", height: 1, background: "white" }}
             className="mb-2"
           ></div>
-          <h4>{record.comment}</h4>
+          <h5>{record.comment}</h5>
           <p style={{ fontSize: 10, marginBottom: 0 + " !important" }}>
             {new Intl.DateTimeFormat("en-US", {
               month: "long",

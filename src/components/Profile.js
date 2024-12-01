@@ -3,7 +3,6 @@ import { useState } from "react";
 
 export default function Profile({ session }) {
   const [imageError, setImageError] = useState(false);
-  console.log("Session:", session);
 
   const avatarUrl = imageError
     ? "https://avatar.iran.liara.run/public/43"
