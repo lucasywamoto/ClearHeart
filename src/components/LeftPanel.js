@@ -8,6 +8,7 @@ import Profile from "./Profile";
 import { useSession } from "next-auth/react";
 import HasSubmitted from "./HasSubmitted";
 
+//Component to render the left panel of the dashboard
 export default function LeftPanel({
   hasSubmittedToday,
   setHasSubmittedToday,
@@ -17,6 +18,7 @@ export default function LeftPanel({
   setTodayMood,
   setTodayMoodType,
 }) {
+  //get the user session to display the user profile (name and avatar)
   const { data: session } = useSession();
 
   return (

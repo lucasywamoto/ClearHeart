@@ -1,6 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import ClearRecords from "@/models/ClearRecord";
 
+//api route for fetching recent records for Feed component (set to last 10)
 export async function GET(req) {
   try {
     const token = await getToken({ req });

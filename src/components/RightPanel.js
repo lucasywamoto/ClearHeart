@@ -8,6 +8,7 @@ import Image from "next/image";
 import LogoutBtn from "@/components/LogoutBtn";
 import SpectrumPercentages from "./SpectrumPercentages";
 
+//component to render the right panel of the dashboard
 export default function RightPanel({
   todayMood,
   todayMoodType,
@@ -18,6 +19,7 @@ export default function RightPanel({
   const [error, setError] = useState(null);
   const [seconds, setSeconds] = useState(30);
 
+  //fetch the stats data and update every 30 seconds, stats will be used in child components to display data on the dashboard
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,6 +48,7 @@ export default function RightPanel({
 
     fetchData();
 
+    // interval to fetch data every 30 seconds
     const countdownInterval = setInterval(() => {
       setSeconds((prevSeconds) => {
         if (prevSeconds <= 1) {

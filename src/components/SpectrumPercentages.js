@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { getColor } from "@/utils/helpers";
 
 export default function SpectrumPercentages({ stats }) {
+  console.log("SpectrumPercentages", stats);
   const percentages = useMemo(() => {
     if (!stats?.length) return { positive: 0, neutral: 0, negative: 0 };
 

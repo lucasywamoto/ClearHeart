@@ -1,6 +1,6 @@
 import Mood from "@/models/Mood";
-import { connectDB } from "@/utils/db";
 
+//route to fetch all moods to populate the mood selector component
 export async function GET(req) {
   try {
     const moods = await Mood.find().lean();

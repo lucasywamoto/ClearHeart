@@ -2,6 +2,7 @@ import { getToken } from "next-auth/jwt";
 import ClearRecords from "@/models/ClearRecord";
 import { NextResponse } from "next/server";
 
+//route to fetch the last 7 days of mood records to populate the weekly chart
 export async function GET(req) {
   try {
     const token = await getToken({ req });

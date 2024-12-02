@@ -13,7 +13,7 @@ export default function Dashboard() {
       redirect("/login");
     },
   });
-
+  //Dashboard state variables
   const [hasSubmittedToday, setHasSubmittedToday] = useState(false);
   const [todayMood, setTodayMood] = useState(null);
   const [todayMoodType, setTodayMoodType] = useState(null);
@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [selectedMood, setSelectedMood] = useState(null);
   const [error, setError] = useState("");
 
+  //check if user has submitted today's mood
   useEffect(() => {
     const checkTodaySubmission = async () => {
       if (status !== "authenticated") return;
@@ -52,10 +53,12 @@ export default function Dashboard() {
     checkTodaySubmission();
   }, [status]);
 
+  //show spinner while loading
   if (status === "loading" || isLoading) {
     return <Spinner color="light" />;
   }
 
+  //show error message if there is an error
   if (error) {
     return (
       <div className="error-container">
@@ -65,6 +68,7 @@ export default function Dashboard() {
     );
   }
 
+  //render the dashboard
   return (
     <div className="index-container">
       <LeftPanel

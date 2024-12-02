@@ -2,6 +2,7 @@
 
 import { signIn, signOut } from "next-auth/react";
 
+//actions for register submission
 const getCallbackUrl = () => {
   const isProduction = process.env.NODE_ENV === "production";
   const baseUrl = isProduction
@@ -25,6 +26,7 @@ export async function doLogin(formData) {
   });
 }
 
+//action for logout
 export async function doLogout() {
   await signOut({
     callbackUrl: "/login",

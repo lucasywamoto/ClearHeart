@@ -2,6 +2,7 @@ import ClearRecords from "@/models/ClearRecord";
 import Stats from "@/models/Stats";
 import User from "@/models/User";
 
+//route to create a new mood record or delete the record submitted today
 export async function POST(req) {
   try {
     const body = await req.json();

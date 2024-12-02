@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ClearHeart Web App
+
+🌐 Live Demo: https://clearheart.onrender.com/
+
+## Overview
+
+A web application built for the Javascript Frameworks class that allows users to share their daily moods. The application features 36 different moods categorized across three spectrums: Positive, Neutral, and Negative. Users can share one mood per day along with an optional comment.
+
+## Technologies Used
+
+- Node.js
+- Next.js
+- React
+- MongoDB
+- NextAuth.js
+- Bootstrap
+
+## Features
+
+### Dashboard
+
+The dashboard provides real-time mood analytics and updates automatically every 30 seconds:
+
+- Today's most shared mood
+- Personal weekly mood spectrum history
+- Number of users sharing your current mood
+- Distribution of today's moods across the three spectrums
+- Live feed of recent user entries
+
+### Authentication
+
+- Local registration and login system
+- Google OAuth integration via NextAuth.js
+- Secure session management
+
+### Profile System
+
+- Google account integration:
+  - Automatic profile picture import
+  - Username synchronization
+- Local accounts:
+  - Random avatar generation via Avatar Placeholder API
+  - Customizable username
+
+### User Interface
+
+- **Mood Selection**: 36 distinct moods across three spectrums
+- **Search Functionality**: Quick mood search feature for easy selection
+- **Interactive Tooltips**: Hover-activated mood descriptions powered by Bootstrap
+- **Real-time Updates**: Automatic dashboard refresh every 30 seconds
+
+## Technical Implementation
+
+### API Endpoints
+
+The application communicates with the database through RESTful API endpoints.
+
+### Database Schema
+
+MongoDB collections structure:
+
+- User (name, email, password, avatar, oauthProvider, providerId, clearRecords)
+- Mood (mood, type, tooltip)
+- ClearRecord (user, mood, created, dateCreated, timezone)
+- Stats (day, mood, count)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (v14 or higher)
+- MongoDB database
+- Google OAuth credentials (for Google sign-in)
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone [repository-url]
+cd [project-directory]
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Configure environment variables:
+   Create a `.env` file with the following:
+
+```
+DATABASE_URL=your_mongodb_uri
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+NEXTAUTH_SECRET=your_nextauth_secret
+```
+
+4. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Deployment
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+The application can be deployed to platforms supporting Next.js applications like Vercel or Netlify. Follow the platform-specific deployment instructions and ensure all environment variables are properly configured.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Contributing
 
-## Learn More
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-To learn more about Next.js, take a look at the following resources:
+## Acknowledgments
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js Documentation
+- NextAuth.js
+- Bootstrap Documentation
+- Avatar Placeholder API
+- Background - Modified version from https://codepen.io/walpolea/pen/JjwYaxM

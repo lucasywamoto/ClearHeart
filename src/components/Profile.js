@@ -4,6 +4,7 @@ import { useState } from "react";
 export default function Profile({ session }) {
   const [imageError, setImageError] = useState(false);
 
+  //if the user has no image, use a default avatar
   const avatarUrl = imageError
     ? "https://avatar.iran.liara.run/public/43"
     : session?.user?.image ||

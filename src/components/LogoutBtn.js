@@ -1,5 +1,6 @@
 import { doLogout } from "@/app/action";
 
+// Button component to handle user logout
 export default function LogoutBtn() {
   return (
     <form action={doLogout}>

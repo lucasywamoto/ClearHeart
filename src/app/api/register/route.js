@@ -3,6 +3,7 @@ import { createUser } from "@/queries/users";
 import { connectDB } from "@/utils/db";
 import bcrypt from "bcryptjs";
 
+//route to register a new user
 export const POST = async (request) => {
   try {
     const { name, email, password } = await request.json();
@@ -16,7 +17,7 @@ export const POST = async (request) => {
       email,
       password: hashedPassword,
       avatar: `https://avatar.iran.liara.run/public/${
-        Math.floor(Math.random() * 100) + 1
+        Math.floor(Math.random() * 100) + 1 //creates a random avatar
       }`,
     };
 

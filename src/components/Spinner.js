@@ -1,3 +1,4 @@
+//spinner (from bootstrap) component to show loading state
 export default function Spinner({ color }) {
   return (
     <div

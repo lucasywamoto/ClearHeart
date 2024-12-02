@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { getColor } from "@/utils/helpers";
 
+//component to display the form to submit a record
 export default function SendRecordForm({
   session,
   selectedMood,
@@ -12,6 +13,7 @@ export default function SendRecordForm({
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  //function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting || hasSubmittedToday || !session?.user?.id) return;

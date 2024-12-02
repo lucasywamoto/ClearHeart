@@ -2,9 +2,11 @@
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 
+//HasSubmitted component to render when user has already submitted today's mood
 export default function HasSubmitted() {
   const { data: session } = useSession();
 
+  //handle click event to reset today's mood
   async function handleClick(event) {
     event.preventDefault();
     try {

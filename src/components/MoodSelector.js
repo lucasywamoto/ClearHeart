@@ -4,46 +4,36 @@ import { getColor } from "@/utils/helpers";
 export default function MoodSelector({ setSelectedMood, hasSubmittedToday }) {
   const [moods, setMoods] = useState([]);
   const [search, setSearch] = useState("");
-  const tooltipContainerRef = useRef(null);
+  const tooltipInitialized = useRef(false);
 
+  //fetch moods from the API when the component mounts
   useEffect(() => {
     const fetchMoods = async () => {
       try {
         const response = await fetch("/api/moods");
-        if (!response.ok) {
-          throw new Error("Failed to fetch moods");
-        }
+        if (!response.ok) throw new Error("Failed to fetch moods");
         const moodsData = await response.json();
         setMoods(moodsData);
       } catch (error) {
         console.error("Error fetching moods:", error.message);
       }
     };
+
     fetchMoods();
   }, []);
 
-  // Initialize tooltips when moods are loaded
   useEffect(() => {
-    if (moods.length > 0 && typeof bootstrap !== "undefined") {
-      // Get all tooltip elements within the container
-      const tooltipElements = tooltipContainerRef.current.querySelectorAll(
+    // initialize bootstrap tooltips after moods are loaded
+    if (
+      !tooltipInitialized.current &&
+      moods.length > 0 &&
+      typeof bootstrap !== "undefined"
+    ) {
+      const tooltipElements = document.querySelectorAll(
         '[data-bs-toggle="tooltip"]'
       );
-
-      // Initialize each tooltip
-      tooltipElements.forEach((element) => {
-        new bootstrap.Tooltip(element);
-      });
-
-      // Cleanup function to destroy tooltips when component unmounts
-      return () => {
-        tooltipElements.forEach((element) => {
-          const tooltip = bootstrap.Tooltip.getInstance(element);
-          if (tooltip) {
-            tooltip.dispose();
-          }
-        });
-      };
+      tooltipElements.forEach((element) => new bootstrap.Tooltip(element));
+      tooltipInitialized.current = true;
     }
   }, [moods]);
 
@@ -74,11 +64,11 @@ export default function MoodSelector({ setSelectedMood, hasSubmittedToday }) {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <div id="mood-buttons" ref={tooltipContainerRef}>
+      <div id="mood-buttons">
         {filteredMoods.map((mood) => {
           const color = getColor(mood.type);
           return (
-            <a
+            <span
               key={mood._id}
               className="badge rounded-pill py-1 px-2 mb-1 me-1 mood-button fw-regular"
               data-bs-toggle="tooltip"
@@ -90,11 +80,12 @@ export default function MoodSelector({ setSelectedMood, hasSubmittedToday }) {
               style={{
                 backgroundColor: color,
                 textDecoration: "none",
-                cursor: "pointer",
+                cursor: hasSubmittedToday ? "not-allowed" : "pointer",
+                opacity: hasSubmittedToday ? 0.6 : 1,
               }}
             >
               {mood.mood}
-            </a>
+            </span>
           );
         })}
       </div>

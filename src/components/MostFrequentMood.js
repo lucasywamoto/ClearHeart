@@ -2,6 +2,7 @@ import { getColor } from "@/utils/helpers";
 import { useEffect } from "react";
 
 export default function MostFrequentMood({ stats }) {
+  //stats is an array of objects with mood and count properties, getTopMood returns the object with the highest count
   const getTopMood = (stats) => {
     if (!stats || !stats.length) return null;
     return stats.reduce((prev, current) =>

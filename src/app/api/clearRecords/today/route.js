@@ -2,6 +2,7 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import ClearRecords from "@/models/ClearRecord";
 
+//route to check if user has already submitted today's mood
 export async function GET(req) {
   try {
     const token = await getToken({ req });

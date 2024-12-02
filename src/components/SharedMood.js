@@ -2,6 +2,7 @@
 import { getColor } from "@/utils/helpers";
 import { useEffect, useState } from "react";
 
+//component to display the shared mood of the user
 export default function SharedMood({
   todayMood,
   todayMoodType,
@@ -10,6 +11,7 @@ export default function SharedMood({
 }) {
   const [sameMoodCount, setSameMoodCount] = useState(0);
 
+  //update the sameMoodCount state when the stats data is fetched
   useEffect(() => {
     if (!stats || isLoading) return;
 

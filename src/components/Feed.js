@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getColor } from "@/utils/helpers";
 
+//Feed component to display recent records of everyone's mood with comments
 export default function Feed() {
   const [recent, setRecent] = useState([]);
   const [error, setError] = useState(null);

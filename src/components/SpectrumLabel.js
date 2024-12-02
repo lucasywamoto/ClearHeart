@@ -1,3 +1,4 @@
+//component for the spectrum label at bottom of left panel
 export default function SpectrumLabel() {
   return (
     <div id="spectrum-label">
