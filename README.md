@@ -102,3 +102,4 @@ The application can be deployed to platforms supporting Next.js applications lik
 - NextAuth.js
 - Bootstrap Documentation
 - Avatar Placeholder API
+- Background - Modified version from https://codepen.io/walpolea/pen/JjwYaxM
