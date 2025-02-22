@@ -12,16 +12,23 @@ export default function MostFrequentMood({ stats }) {
 
   return (
     <div>
-      <h4 className="fw-light mb-0 text-center">Most people are</h4>
-      {stats && stats.length > 0 && (
-        <h2
-          className="fw-bold mb-0 text-center"
-          style={{ color: getColor(getTopMood(stats).type), fontSize: "36px" }}
-        >
-          {getTopMood(stats).mood.toLowerCase()}
-        </h2>
+      {getTopMood(stats) ? (
+        <>
+          <h4 className="fw-light mb-0 text-center">Most people are</h4>
+          <h2
+            className="fw-bold mb-0 text-center"
+            style={{
+              color: getColor(getTopMood(stats).type),
+              fontSize: "36px",
+            }}
+          >
+            {getTopMood(stats).mood.toLowerCase()}
+          </h2>
+          <h4 className="fw-light text-center">today.</h4>
+        </>
+      ) : (
+        <h4 className="fw-light text-center">No data yet</h4>
       )}
-      <h4 className="fw-light text-center">today.</h4>
     </div>
   );
 }
